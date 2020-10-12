@@ -1,12 +1,27 @@
 use std::str::FromStr;
-use crate::ast::{Expr, Id, Lambda, Lit, Param};
+use crate::ast::{Def, Expr, Exprs, Id, Lambda, Lit, Param};
 
 grammar;
 
+pub Def: Def = {
+    <id:Id> ":" <e:Expr> => Def::new(id, e),
+}
+
+pub Do: Exprs = {
+    "do" <Exprs> "end" => <>,
+}
+
+
 pub Expr: Expr = {
+    Def => Expr::Def(Box::new(<>)),
+    Do => Expr::Do(<>),
     Id => Expr::Id(<>),
     Lambda => Expr::Lambda(<>),
     Lit => Expr::Lit(<>),
+}
+
+pub Exprs: Exprs = {
+    <(<Expr> ";"?)+> => Exprs::new(<>),
 }
 
 pub Lambda: Lambda = {

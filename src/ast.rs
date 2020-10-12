@@ -1,8 +1,36 @@
 #[derive(Debug)]
+pub struct Def {
+    id: Id,
+    expr: Expr,
+}
+
+impl Def {
+    pub fn new(id: Id, expr: Expr) -> Self {
+        Self {
+            id,
+            expr,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub enum Expr {
+    Def(Box<Def>),
+    Do(Exprs),
     Id(Id),
     Lambda(Lambda),
     Lit(Lit),
+}
+
+#[derive(Debug)]
+pub struct Exprs {
+    pub exprs: Vec<Expr>,
+}
+
+impl Exprs {
+    pub fn new(exprs: Vec<Expr>) -> Self {
+        Self { exprs }
+    }
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -16,8 +44,8 @@ impl Id {
 
 #[derive(Debug)]
 pub struct Lambda {
-    args: Vec<Param>,
-    body: Box<Expr>,
+    pub args: Vec<Param>,
+    pub body: Box<Expr>,
 }
 
 impl Lambda {
@@ -42,8 +70,8 @@ pub enum Lit {
 
 #[derive(Debug)]
 pub struct Param {
-    param: Id,
-    default_arg: Option<Expr>,
+    pub param: Id,
+    pub default_arg: Option<Expr>,
 }
 
 impl Param {
