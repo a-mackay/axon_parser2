@@ -16,9 +16,10 @@ fn literals_work() {
 }
 
 #[test]
-fn calculator1() {
-    assert!(axon::TermParser::new().parse("22").is_ok());
-    assert!(axon::TermParser::new().parse("(22)").is_ok());
-    assert!(axon::TermParser::new().parse("((((22))))").is_ok());
-    assert!(axon::TermParser::new().parse("((22)").is_err());
+fn lambdas_work() {
+    p!(LambdaParser, "() => null");
+    p!(LambdaParser, "someVar => null");
+    p!(LambdaParser, "(someVar) => null");
+    p!(LambdaParser, "(oneVar, twoVar) => null");
+    p!(LambdaParser, "(oneVar: null, twoVar: null) => null");
 }

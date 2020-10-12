@@ -1,18 +1,41 @@
 use std::str::FromStr;
-use crate::ast::{Lit};
+use crate::ast::{Expr, Id, Lambda, Lit, Param};
 
 grammar;
 
-pub Term: f64 = {
-    <n:Num> => n,
-    "(" <t:Term> ")" => t,
-};
+pub Expr: Expr = {
+    Id => Expr::Id(<>),
+    Lambda => Expr::Lambda(<>),
+    Lit => Expr::Lit(<>),
+}
+
+pub Lambda: Lambda = {
+    "(" ")" "=>" <Expr> => Lambda::new_no_args(<>),
+    <id:Id> "=>" <e:Expr> => {
+        let param = Param::new(id);
+        Lambda::new(vec![param], e)
+    },
+    "(" <first_param:Param> <params:("," <Param>)*> ")" "=>" <e:Expr> => {
+        let mut params = params;
+        params.insert(0, first_param);
+        Lambda::new(params, e)
+    },
+}
 
 pub Lit: Lit = {
     "null" => Lit::Null,
     "true" => Lit::Bool(true),
     "false" => Lit::Bool(false),
     Num => Lit::Num(<>),
+}
+
+pub Param: Param = {
+    <id:Id> ":" <e:Expr> => Param::new_with_default_arg(id, e),
+    Id => Param::new(<>),
+}
+
+Id: Id = {
+    r"[a-z]([a-zA-Z0-9_])*" => Id::new(<>),
 }
 
 Num: f64 = {
