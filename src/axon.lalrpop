@@ -24,15 +24,15 @@ pub Lines: Lines = {
 }
 
 pub Lambda: Lambda = {
-    "(" ")" "=>" <Expr> => Lambda::new_no_args(<>),
-    <id:Id> "=>" <e:Expr> => {
+    "(" ")" "=>" <ExprOrStmt> => Lambda::new_no_args(Lines::new_from_eos(<>)),
+    <id:Id> "=>" <eos:ExprOrStmt> => {
         let param = Param::new(id);
-        Lambda::new(vec![param], e)
+        Lambda::new(vec![param], Lines::new_from_eos(eos))
     },
-    "(" <first_param:Param> <params:("," <Param>)*> ")" "=>" <e:Expr> => {
+    "(" <first_param:Param> <params:("," <Param>)*> ")" "=>" <eos:ExprOrStmt> => {
         let mut params = params;
         params.insert(0, first_param);
-        Lambda::new(params, e)
+        Lambda::new(params, Lines::new_from_eos(eos))
     },
 }
 

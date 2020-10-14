@@ -30,6 +30,24 @@ impl Lines {
     pub fn new(lines: Vec<ExprOrStmt>) -> Self {
         Self { lines }
     }
+
+    // pub fn new_from_expr(expr: Expr) -> Self {
+    //     Self {
+    //         lines: vec![ExprOrStmt::Expr(expr)],
+    //     }
+    // }
+
+    // pub fn new_from_stmt(stmt: Stmt) -> Self {
+    //     Self {
+    //         lines: vec![ExprOrStmt::Stmt(stmt)],
+    //     }
+    // }
+
+    pub fn new_from_eos(eos: ExprOrStmt) -> Self {
+        Self {
+            lines: vec![eos],
+        }
+    }
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -44,18 +62,18 @@ impl Id {
 #[derive(Debug)]
 pub struct Lambda {
     pub args: Vec<Param>,
-    pub body: Box<Expr>,
+    pub body: Box<Lines>,
 }
 
 impl Lambda {
-    pub fn new(args: Vec<Param>, body: Expr) -> Self {
+    pub fn new(args: Vec<Param>, body: Lines) -> Self {
         Self {
             args: args,
             body: Box::new(body),
         }
     }
 
-    pub fn new_no_args(body: Expr) -> Self {
+    pub fn new_no_args(body: Lines) -> Self {
         Self::new(vec![], body)
     }
 }
