@@ -1,7 +1,11 @@
 use std::str::FromStr;
-use crate::ast::{Def, Expr, ExprOrStmt, Id, Lambda, Lines, Lit, Param, Stmt};
+use crate::ast::{Assign, Def, Expr, ExprOrStmt, Id, Lambda, Lines, Lit, Param, Stmt};
 
 grammar;
+
+pub Assign: Assign = {
+    <id:Id> "=" <e:Expr> => Assign::new(id, e),
+}
 
 pub Def: Def = {
     <id:Id> ":" <e:Expr> => Def::new(id, e),
@@ -49,7 +53,10 @@ pub Param: Param = {
 }
 
 pub Stmt: Stmt = {
+    Assign => Stmt::Assign(<>),
     Def => Stmt::Def(<>),
+    "return" <Expr> => Stmt::Return(<>),
+    "throw" <Expr> => Stmt::Throw(<>),
 }
 
 ExprOrStmt: ExprOrStmt = {

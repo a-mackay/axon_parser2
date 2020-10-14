@@ -1,4 +1,19 @@
 #[derive(Debug)]
+pub struct Assign {
+    id: Id,
+    expr: Expr,
+}
+
+impl Assign {
+    pub fn new(id: Id, expr: Expr) -> Self {
+        Self {
+            id,
+            expr,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct Def {
     id: Id,
     expr: Expr,
@@ -19,6 +34,11 @@ pub enum Expr {
     Id(Id),
     Lambda(Lambda),
     Lit(Lit),
+}
+
+#[derive(Debug)]
+pub struct OneLiner {
+    //
 }
 
 #[derive(Debug)]
@@ -109,6 +129,7 @@ impl Param {
 
 #[derive(Debug)]
 pub enum Stmt {
+    Assign(Assign),
     Def(Def),
     Return(Expr),
     Throw(Expr),
