@@ -18,19 +18,20 @@ fn defs_work() {
 
 #[test]
 fn do_blocks_work() {
-    assert_eq!(p!(DoParser, "do null end").exprs.len(), 1);
-    assert_eq!(p!(DoParser, "do null; null end").exprs.len(), 2);
-    assert_eq!(p!(DoParser, "do\nnull\nnull\nend").exprs.len(), 2);
-    assert_eq!(p!(DoParser, "do\nnull\nnull;end").exprs.len(), 2);
-    assert_eq!(p!(DoParser, "do null; endFunc end").exprs.len(), 2);
+    assert_eq!(p!(DoParser, "do null end").lines.len(), 1);
+    assert_eq!(p!(DoParser, "do null; null end").lines.len(), 2);
+    assert_eq!(p!(DoParser, "do\nnull\nnull\nend").lines.len(), 2);
+    assert_eq!(p!(DoParser, "do\nnull\nnull;end").lines.len(), 2);
+    assert_eq!(p!(DoParser, "do null; endFunc end").lines.len(), 2);
 }
 
 #[test]
 fn exprs_work() {
-    assert_eq!(p!(ExprsParser, "null").exprs.len(), 1);
-    assert_eq!(p!(ExprsParser, "null; null").exprs.len(), 2);
-    assert_eq!(p!(ExprsParser, "null\nnull").exprs.len(), 2);
-    assert_eq!(p!(ExprsParser, "null\nnull;").exprs.len(), 2);
+    assert_eq!(p!(LinesParser, "null").lines.len(), 1);
+    assert_eq!(p!(LinesParser, "null; null").lines.len(), 2);
+    assert_eq!(p!(LinesParser, "null\nnull").lines.len(), 2);
+    assert_eq!(p!(LinesParser, "null\nnull;").lines.len(), 2);
+    assert_eq!(p!(LinesParser, "x: 1\nnull;").lines.len(), 2);
 }
 
 #[test]

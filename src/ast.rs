@@ -15,21 +15,20 @@ impl Def {
 
 #[derive(Debug)]
 pub enum Expr {
-    Def(Box<Def>),
-    Do(Exprs),
+    Do(Lines),
     Id(Id),
     Lambda(Lambda),
     Lit(Lit),
 }
 
 #[derive(Debug)]
-pub struct Exprs {
-    pub exprs: Vec<Expr>,
+pub struct Lines {
+    pub lines: Vec<ExprOrStmt>,
 }
 
-impl Exprs {
-    pub fn new(exprs: Vec<Expr>) -> Self {
-        Self { exprs }
+impl Lines {
+    pub fn new(lines: Vec<ExprOrStmt>) -> Self {
+        Self { lines }
     }
 }
 
@@ -88,4 +87,17 @@ impl Param {
             default_arg: Some(default_arg),
         }
     }
+}
+
+#[derive(Debug)]
+pub enum Stmt {
+    Def(Def),
+    Return(Expr),
+    Throw(Expr),
+}
+
+#[derive(Debug)]
+pub enum ExprOrStmt {
+    Expr(Expr),
+    Stmt(Stmt),
 }

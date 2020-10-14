@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use crate::ast::{Def, Expr, Exprs, Id, Lambda, Lit, Param};
+use crate::ast::{Def, Expr, ExprOrStmt, Id, Lambda, Lines, Lit, Param, Stmt};
 
 grammar;
 
@@ -7,21 +7,20 @@ pub Def: Def = {
     <id:Id> ":" <e:Expr> => Def::new(id, e),
 }
 
-pub Do: Exprs = {
-    "do" <Exprs> "end" => <>,
+pub Do: Lines = {
+    "do" <Lines> "end" => <>,
 }
 
 
 pub Expr: Expr = {
-    Def => Expr::Def(Box::new(<>)),
     Do => Expr::Do(<>),
     Id => Expr::Id(<>),
     Lambda => Expr::Lambda(<>),
     Lit => Expr::Lit(<>),
 }
 
-pub Exprs: Exprs = {
-    <(<Expr> ";"?)+> => Exprs::new(<>),
+pub Lines: Lines = {
+    <(<ExprOrStmt> ";"?)+> => Lines::new(<>),
 }
 
 pub Lambda: Lambda = {
@@ -47,6 +46,15 @@ pub Lit: Lit = {
 pub Param: Param = {
     <id:Id> ":" <e:Expr> => Param::new_with_default_arg(id, e),
     Id => Param::new(<>),
+}
+
+pub Stmt: Stmt = {
+    Def => Stmt::Def(<>),
+}
+
+ExprOrStmt: ExprOrStmt = {
+    Expr => ExprOrStmt::Expr(<>),
+    Stmt => ExprOrStmt::Stmt(<>),
 }
 
 Id: Id = {
