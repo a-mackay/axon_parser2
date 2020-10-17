@@ -1,0 +1,50 @@
+x: 1..2
+
+x => 1..2
+
+1..2..3
+
+-> solution dont allow garbage on either side of the ..
+
+
+---
+Add one-liner expressions like
+termBase.something() + 1 and false
+---
+do func calls first
+x.something
+x.something()
+something(x)
+x.something x => y
+x.something() x => y
+x.something() (x, y) => z
+x.something(x => y)
+x.something((x, y) => z)
+
+maybe make lambdas be a special sort of expression? that can only be used in Assign and Def
+newlines are significant unlike all other whitespace - research the tokenizer again?
+
+[0] - when is this a list and when is it an index?
+
+list
+([0])
+x: [0]
+\n [0]
+;[0]
+return [0]
+throw [0]
+do [0] end
+keyword [0]
+<operator> [0]
+[[0]]
+=> [0]
+
+
+index (no newline before)
+something  [0]
+something() [0]
+"test"[0]
+[a, b, c][0]
+{a: 1}["a"]
+somithng_[0]
+something123[0]
