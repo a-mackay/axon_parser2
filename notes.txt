@@ -24,6 +24,25 @@ x.something((x, y) => z)
 maybe make lambdas be a special sort of expression? that can only be used in Assign and Def
 newlines are significant unlike all other whitespace - research the tokenizer again?
 
+Operators in order of precedence:
+
+Primary: (x) x.y x.y() x->y x[y]
+Unary: not x -x
+Multiplicative: * /
+Additive: + -
+Equality: == !=
+Comparison: < <= >= > <=>
+Conditional And: and
+Conditional Or: or
+Assignment: =
+
+-------
+
+someFn().someOtherFn()
+something.someFn()
+
+--------
+
 [0] - when is this a list and when is it an index?
 
 list

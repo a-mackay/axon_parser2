@@ -1,4 +1,33 @@
 #[derive(Debug)]
+pub struct Arg(Expr);
+
+impl Arg {
+    pub fn new(expr: Expr) -> Self {
+        Self(expr)
+    }
+
+}
+
+#[derive(Debug)]
+pub struct Args {
+    pub args: Vec<Arg>,
+}
+
+impl Args {
+    pub fn new(args: Vec<Arg>) -> Self {
+        Self {
+            args,
+        }
+    }
+
+    pub fn empty() -> Self {
+        Self {
+            args: vec![],
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct Assign {
     id: Id,
     expr: Expr,
@@ -37,6 +66,21 @@ pub enum Expr {
 }
 
 #[derive(Debug)]
+pub struct FnCall {
+    pub name: Id,
+    pub args: Args,
+}
+
+impl FnCall {
+    pub fn new(name: Id, args: Args) -> Self {
+        Self {
+            name,
+            args,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct OneLiner {
     //
 }
@@ -50,18 +94,6 @@ impl Lines {
     pub fn new(lines: Vec<ExprOrStmt>) -> Self {
         Self { lines }
     }
-
-    // pub fn new_from_expr(expr: Expr) -> Self {
-    //     Self {
-    //         lines: vec![ExprOrStmt::Expr(expr)],
-    //     }
-    // }
-
-    // pub fn new_from_stmt(stmt: Stmt) -> Self {
-    //     Self {
-    //         lines: vec![ExprOrStmt::Stmt(stmt)],
-    //     }
-    // }
 
     pub fn new_from_eos(eos: ExprOrStmt) -> Self {
         Self {
@@ -139,4 +171,11 @@ pub enum Stmt {
 pub enum ExprOrStmt {
     Expr(Expr),
     Stmt(Stmt),
+}
+
+#[derive(Debug)]
+pub enum TermBase {
+    FnCall(FnCall),
+    Var(Id),
+    Lit(Lit),
 }

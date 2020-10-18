@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use crate::ast::{Assign, Def, Expr, ExprOrStmt, Id, Lambda, Lines, Lit, Param, Stmt};
+use crate::ast::{Arg, Args, Assign, Def, Expr, ExprOrStmt, FnCall, Id, Lambda, Lines, Lit, Param, Stmt, TermBase};
 
 grammar;
 
@@ -56,6 +56,22 @@ pub Stmt: Stmt = {
     Def => Stmt::Def(<>),
     "return" <Expr> => Stmt::Return(<>),
     "throw" <Expr> => Stmt::Throw(<>),
+}
+
+pub TermBase: TermBase = {
+    <id:Id> "(" ")" => {
+        let fn_call = FnCall::new(id, Args::empty());
+        TermBase::FnCall(fn_call)
+    },
+    <id:Id> "(" <first_expr:(Nl? <Expr>)> <exprs:("," Nl? <Expr>)*> Nl? ")" => {
+        let mut exprs = exprs;
+        exprs.insert(0, first_expr);
+        let args = exprs.into_iter().map(Arg::new).collect();
+        let fn_call = FnCall::new(id, Args::new(args));
+        TermBase::FnCall(fn_call)
+    },
+    <Id> => TermBase::Var(<>),
+    <Lit> => TermBase::Lit(<>),
 }
 
 ExprOrStmt: ExprOrStmt = {
