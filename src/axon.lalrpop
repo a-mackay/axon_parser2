@@ -8,13 +8,12 @@ pub Assign: Assign = {
 }
 
 pub Def: Def = {
-    <id:Id> ":" <e:Expr> => Def::new(id, e),
+    <id:Id> ":" Nl? <e:Expr> => Def::new(id, e),
 }
 
 pub Do: Lines = {
-    "do" <Lines> "end" => <>,
+    "do" Nl? <Lines> "end" => <>,
 }
-
 
 pub Expr: Expr = {
     Do => Expr::Do(<>),
@@ -24,7 +23,7 @@ pub Expr: Expr = {
 }
 
 pub Lines: Lines = {
-    <(<ExprOrStmt> ";"?)+> => Lines::new(<>),
+    <(<ExprOrStmt> ";"? Nl?)+> => Lines::new(<>),
 }
 
 pub Lambda: Lambda = {
@@ -70,4 +69,11 @@ Id: Id = {
 
 Num: f64 = {
     r"-?\d+(\.\d+)?" => f64::from_str(<>).unwrap(),
+}
+
+match {
+    r"[[:space:]&&[^\n]]*" => { },
+    r"\n" => Nl,
+} else {
+    _
 }
