@@ -70,7 +70,7 @@ fn termbase_is_var(termbase: TermBase, var: Id) -> bool {
 
 fn termbase_fncall_args(termbase: TermBase) -> Vec<Arg> {
     match termbase {
-        TermBase::FnCall(fnc) => fnc.args.args,
+        TermBase::FnCall(fnc) => fnc.args.into_vec(),
         _ => panic!("Expected FnCall"),
     }
 }
@@ -91,4 +91,38 @@ fn termbases_work() {
 
     let tb = p!(TermBaseParser, "varName(a, b)");
     assert_eq!(termbase_fncall_args(tb).len(), 2);
+}
+
+#[test]
+fn termchains_with_lit_base_work() {
+    let tc = p!(TermChainParser, "null.toStr");
+    assert!(termbase_is_lit(tc.term_base, Lit::Null));
+    assert_eq!(tc.items.len(), 1);
+
+    let tc = p!(TermChainParser, "false\n.toStr()");
+    assert!(termbase_is_lit(tc.term_base, Lit::Bool(false)));
+    assert_eq!(tc.items.len(), 1);
+}
+
+#[test]
+fn termchains_with_fncall_base_work() {
+    let tc = p!(TermChainParser, "someFn().toStr");
+    assert_eq!(termbase_fncall_args(tc.term_base).len(), 0);
+    assert_eq!(tc.items.len(), 1);
+
+    let tc = p!(TermChainParser, "anotherFn(1)\n.toStr()");
+    assert_eq!(termbase_fncall_args(tc.term_base).len(), 1);
+    assert_eq!(tc.items.len(), 1);
+}
+
+#[test]
+fn termchains_multiple_items_work() {
+    let tc = p!(TermChainParser, "null.toStr.toAxonCode()");
+    assert_eq!(tc.items.len(), 2);
+}
+
+#[test]
+fn termchains_simple_trailing_lambdas_work() {
+    let tc = p!(TermChainParser, "myList.each item => doNothing()");
+    assert_eq!(tc.items.len(), 1);
 }

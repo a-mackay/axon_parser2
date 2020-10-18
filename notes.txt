@@ -67,3 +67,8 @@ something() [0]
 {a: 1}["a"]
 somithng_[0]
 something123[0]
+
+---
+
+list.each (item) => doSomething()
+list.each(item)

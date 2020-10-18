@@ -10,7 +10,7 @@ impl Arg {
 
 #[derive(Debug)]
 pub struct Args {
-    pub args: Vec<Arg>,
+    args: Vec<Arg>,
 }
 
 impl Args {
@@ -24,6 +24,10 @@ impl Args {
         Self {
             args: vec![],
         }
+    }
+
+    pub fn into_vec(self) -> Vec<Arg> {
+        self.args
     }
 }
 
@@ -128,6 +132,28 @@ impl Lambda {
     pub fn new_no_args(body: Lines) -> Self {
         Self::new(vec![], body)
     }
+}
+
+#[derive(Debug)]
+pub struct TermChain {
+    pub term_base: TermBase,
+    pub items: Vec<TermChainItem>,
+}
+
+impl TermChain {
+    pub fn new(term_base: TermBase, items: Vec<TermChainItem>) -> Self {
+        Self {
+            term_base,
+            items,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum TermChainItem {
+    FnCall(FnCall),
+    // Trap
+    // Get
 }
 
 #[derive(Debug, PartialEq)]

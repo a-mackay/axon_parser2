@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use crate::ast::{Arg, Args, Assign, Def, Expr, ExprOrStmt, FnCall, Id, Lambda, Lines, Lit, Param, Stmt, TermBase};
+use crate::ast::{Arg, Args, Assign, Def, Expr, ExprOrStmt, FnCall, Id, Lambda, Lines, Lit, Param, Stmt, TermBase, TermChain, TermChainItem};
 
 grammar;
 
@@ -63,15 +63,43 @@ pub TermBase: TermBase = {
         let fn_call = FnCall::new(id, Args::empty());
         TermBase::FnCall(fn_call)
     },
-    <id:Id> "(" <first_expr:(Nl? <Expr>)> <exprs:("," Nl? <Expr>)*> Nl? ")" => {
-        let mut exprs = exprs;
-        exprs.insert(0, first_expr);
-        let args = exprs.into_iter().map(Arg::new).collect();
-        let fn_call = FnCall::new(id, Args::new(args));
+    <id:Id> "(" <args:Args> ")" => {
+        let fn_call = FnCall::new(id, args);
         TermBase::FnCall(fn_call)
     },
     <Id> => TermBase::Var(<>),
     <Lit> => TermBase::Lit(<>),
+}
+
+pub TermChain: TermChain = {
+    <base:TermBase> <items:(Nl* <TermChainItem>)*> => {
+        TermChain::new(base, items)
+    },
+}
+
+pub TermChainItem: TermChainItem = {
+    "." <Id> => TermChainItem::FnCall(FnCall::new(<>, Args::empty())),
+    "." <id:Id> " " <lambda:Lambda> => {
+        let args = Args::new(vec![Arg::new(Expr::Lambda(lambda))]);
+        let fn_call = FnCall::new(id, args);
+        TermChainItem::FnCall(fn_call)
+    },
+    "." <Id> "(" ")" => TermChainItem::FnCall(FnCall::new(<>, Args::empty())),
+    "." <id:Id> "(" <args:Args> ")" => TermChainItem::FnCall(FnCall::new(id, args)),
+    "." <id:Id> "(" <args:Args> ")" " "+ <lambda:Lambda> => {
+        let mut args = args.into_vec();
+        args.push(Arg::new(Expr::Lambda(lambda)));
+        let fn_call = FnCall::new(id, Args::new(args.into_iter().collect()));
+        TermChainItem::FnCall(fn_call)
+    },
+}
+
+Args: Args = {
+    <first_expr:(Nl? <Expr>)> <exprs:("," Nl? <Expr>)*> Nl? => {
+        let mut exprs = exprs;
+        exprs.insert(0, first_expr);
+        Args::new(exprs.into_iter().map(Arg::new).collect())
+    }
 }
 
 ExprOrStmt: ExprOrStmt = {
